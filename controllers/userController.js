@@ -1,3 +1,4 @@
+const BookingModel = require("../models/BookingModel");
 const MentorModal = require("../models/mentorModel");
 const UserModel = require("../models/userModel");
 const { SendVerifyEmail } = require("../services/mailingServices");
@@ -242,6 +243,36 @@ const updateProfile = async( req , res, next) => {
     }
 }
 
+//book a mentor:
+const bookMentor = async (req, res) => {
+
+  try {
+    const { userId, mentorId, duration, amount, date, slot } = req.body;
+    const newBooking = new BookingModel({
+      userId,
+      mentorId,
+      duration,
+      amount,
+      date,
+      slot,
+    });
+    await newBooking.save();
+    
+    res.status(200).json({
+      success: true,
+      message: "Booking successfull",
+      sessionDetails: newBooking,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      success: false,
+      message: "Something went wrong in Booking!",
+      SessionDetails: newBooking
+    })
+  }
+};
+
   module.exports = {
     register,
     verifyEmail,
@@ -250,4 +281,5 @@ const updateProfile = async( req , res, next) => {
     getMentorCategoryWise,
     getProfile,
     updateProfile,
+    bookMentor,
   }
