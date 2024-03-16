@@ -10,9 +10,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "email is necessary"],
   },
-  mobileno:{
-    type:Number,
-  },
   activestatus: {
     type: Boolean,
     default: false,
