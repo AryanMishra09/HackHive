@@ -192,11 +192,113 @@ const updateSchedule = async (req, res) => {
         success: true,
         msg: "Slot was updated successfully", 
         slots: responseArray });
+};
+
+// fetch the schedule of a mentor on a particular date
+const getSchedule = async (req, res) => {
+    const { mentorId, date } = req.query;
+    try {
+        const schedule = await ScheduleModel.findOne({
+            mentorId:mentorId,
+            date:date
+        });
+        console.log("Schedule: ",schedule)
+        if(!schedule){
+            schedule = new ScheduleModel({
+                mentorId,
+                date,
+            });
+        }
+        const responseArray = slotTimings.map((time) => {
+          if (schedule && schedule.slots.includes(time)) {
+            return {
+              time: time,
+              available: false,
+            };
+          } else {
+            return {
+              time: time,
+              available: true,
+            };
+          }
+        });
+        return res.status(200).json({ slots: responseArray });
+    } catch (error) {
+        console.log("Error: ",error.message);
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong!"
+        });
+    }
   };
+
+  //get Profile
+  const getProfile=async(req, res, next)=>{
+    try {
+        const id = req.query.id;
+        const mentor = await MentorModal.findById({_id : id});
+        if(!mentor){
+            return res.status(403).json({
+                success: false,
+                message: "No Profile with this Id",
+            });
+        }
+        const { password, ...rest} = mentor._doc;
+        return res.status(200).json({
+            success: true,
+            mentor: rest,
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+        });
+    }
+  }
+
+  
+//update mentor profile:
+const updateProfile = async( req , res, next) => {
+
+    try {
+        const id = req.query.id
+      const { username, chargesph, about, disorders, qualification, imagepath } = req.body;
+      const updateMentor = await MentorModal.findByIdAndUpdate({_id : id}, {
+        $set: {
+          username,
+          imagepath,
+          chargesph,
+          about,
+          qualification,
+          disorders,
+        }
+      }, {new: true});
+      const {password, ...rest} = updateMentor._doc;
+  
+      return res
+      .status(200)
+      .json({
+        success: true,
+        message: "Profile Updated SuccessFully",
+        updatedProfile: rest,
+      });
+  
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        success: false,
+        message: "Something went wrong",
+      });
+    }
+}
 
   module.exports = {
     register,
     verifyEmail,
     login,
     updateSchedule,
+    getSchedule,
+    getProfile,
+    updateProfile,
   }
