@@ -1,6 +1,6 @@
 const mail = {
-    emailUser: process.env.EMAIL_USERNAME,
-    emailPassword: process.env.EMAIL_PASSWORD,
+    emailUser: "2021cs40ar@mitsgwl.ac.in",
+    emailPassword: "9302623817"
 };
 
 module.exports = {mail} ;

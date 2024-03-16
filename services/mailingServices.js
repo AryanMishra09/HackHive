@@ -1,9 +1,10 @@
-
+const nodemailer = require('nodemailer');
+const { mail } = require('../utils/nodemailerConfig');
 
 //for email verification : 
 const SendVerifyEmail = async (username, email, token) => {
     try{
-        const transporter =nademailer.createTransport({
+        const transporter =nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 587,
             secure: false,
