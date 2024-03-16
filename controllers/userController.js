@@ -1,4 +1,5 @@
 const UserModel = require("../models/userModel");
+const { SendVerifyEmail } = require("../services/mailingServices");
 const { hashPassword } = require("../utils/passwordUtils");
 
 
@@ -32,6 +33,7 @@ const register = async (req, res, next) => {
         token,
       });
       await newUser.save();
+      SendVerifyEmail(newUser.username, newUser.email, token);
       const {password: pass, ...rest} = newUser._doc;
       res.status(200).json({
         message:"Registration Successfull! An OTP has been sent to your email. Verify by entering the OTP",
@@ -44,8 +46,51 @@ const register = async (req, res, next) => {
             message: "Something went wrong!"
         });
     }
-  };
+};
+
+//verify user email:
+const verifyEmail = async(req, res, next)=>{
+    try {
+      const {token, email} = req.body;
+      const user = await UserModel.findOne({ email: email });
+      if(!user){
+        return res.status(403).json({
+            success: false,
+            message: "This email Id is not registered in our app."
+        });
+      }
+    const validUser = await UserModel.findOne({token});
+    if(!validUser){
+        const deletedUser = await UserModel.deleteOne({ email });
+        return res.status(404).json({
+            success: false,
+            message: 'Invalid OTP Entered. You have to register again!',
+        })
+    }else{
+      const user = await UserModel.findByIdAndUpdate(
+        {
+          _id: validUser._id
+        },
+        {
+          $set: {
+            token:"",
+            isVerified: true,
+          }
+        },
+        {new:true}
+      );
+      return res.status(200).json({
+        success: true,
+        message: "Your Account has been verified Successfully! Please Login",
+      });
+    }
+    } catch (error) {
+      next(new BadRequestError(`${error.message}`));
+    }
+    
+  }
 
   module.exports = {
-    register
+    register,
+    verifyEmail
   }
