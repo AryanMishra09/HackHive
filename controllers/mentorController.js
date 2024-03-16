@@ -1,3 +1,4 @@
+const SessionModel = require("../models/SessionModel");
 const MentorModal = require("../models/mentorModel");
 const ScheduleModel = require("../models/scheduleModel");
 const { SendVerifyEmail } = require("../services/mailingServices");
@@ -293,6 +294,34 @@ const updateProfile = async( req , res, next) => {
     }
 }
 
+//get history:
+const getHistory = async(req, res, next)=>{
+    try {
+        const mentorId = req.query.mentorId;
+        const history = await SessionModel.find({mentorId});
+        console.log("history: ", history)
+        if(history.length == 0){
+            return res.status(403).json({
+                success: true,
+                message: "You have no session history"
+            });
+        }  
+
+        return res.status(200).json({
+            success:true,
+            sessionHistory: history,
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong!",
+        })
+    }
+} 
+
+
   module.exports = {
     register,
     verifyEmail,
@@ -301,4 +330,5 @@ const updateProfile = async( req , res, next) => {
     getSchedule,
     getProfile,
     updateProfile,
+    getHistory,
   }
