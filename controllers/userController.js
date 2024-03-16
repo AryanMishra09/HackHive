@@ -183,6 +183,63 @@ const getMentorCategoryWise = async(req, res, next)=>{
       error: error.message,
     })
   }
+};
+
+  //get Profile
+  const getProfile=async(req, res, next)=>{
+    try {
+        const id = req.query.id;
+        const user = await UserModel.findById({_id : id});
+        if(!user){
+            return res.status(403).json({
+                success: false,
+                message: "No Profile with this Id",
+            });
+        }
+        const { password, ...rest} = user._doc;
+        return res.status(200).json({
+            success: true,
+            mentor: rest,
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong",
+        });
+    }
+  }
+
+  
+//update mentor profile:
+const updateProfile = async( req , res, next) => {
+
+    try {
+        const id = req.query.id
+      const { username, imagepath } = req.body;
+      const updateUser = await UserModel.findByIdAndUpdate({_id : id}, {
+        $set: {
+          username,
+          imagepath,
+        }
+      }, {new: true});
+      const {password, ...rest} = updateUser._doc;
+  
+      return res
+      .status(200)
+      .json({
+        success: true,
+        message: "Profile Updated SuccessFully",
+        updatedProfile: rest,
+      });
+  
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        success: false,
+        message: "Something went wrong",
+      });
+    }
 }
 
   module.exports = {
@@ -190,5 +247,7 @@ const getMentorCategoryWise = async(req, res, next)=>{
     verifyEmail,
     login,
     getAllMentors,
-    getMentorCategoryWise
+    getMentorCategoryWise,
+    getProfile,
+    updateProfile,
   }

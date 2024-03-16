@@ -1,5 +1,5 @@
 const Router = require("express");
-const { register, verifyEmail, login, getAllMentors, getMentorCategoryWise } = require("../controllers/userController");
+const { register, verifyEmail, login, getAllMentors, getMentorCategoryWise, getProfile, updateProfile } = require("../controllers/userController");
 const router = Router();
 
 //User register
@@ -12,7 +12,10 @@ router.route("/login").post(login);
 router.route("/getMentorList").get(getAllMentors);
 //for getting category wise mentor:
 router.route("/getMentorListCategorywise").get(getMentorCategoryWise);
-
+//for getting profile:
+router.route('/getProfile').get(getProfile);
+//for updating profile: 
+router.route("/updateProfile").post(updateProfile);
 
 
 module.exports = router;
