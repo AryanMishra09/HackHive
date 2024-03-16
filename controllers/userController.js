@@ -273,6 +273,29 @@ const bookMentor = async (req, res) => {
   }
 };
 
+//get the booking history of the user
+const getBookingHistory = async (req, res, next) => {
+  try {
+    const userId = req.query.userId;
+    const bookings = await BookingModel.find({userId});
+    if(!bookings){
+      return res.status(403).json({
+        success: true,
+        message
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      bookings
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went Wrong",
+    })
+  }
+};
+
   module.exports = {
     register,
     verifyEmail,
@@ -282,4 +305,5 @@ const bookMentor = async (req, res) => {
     getProfile,
     updateProfile,
     bookMentor,
+    getBookingHistory
   }

@@ -1,5 +1,5 @@
 const Router = require("express");
-const { register, verifyEmail, login, getAllMentors, getMentorCategoryWise, getProfile, updateProfile, bookMentor } = require("../controllers/userController");
+const { register, verifyEmail, login, getAllMentors, getMentorCategoryWise, getProfile, updateProfile, bookMentor, getBookingHistory } = require("../controllers/userController");
 const { generateSession, updateSessionSchedule } = require("../middleware/sessionMiddleware");
 const router = Router();
 
@@ -26,6 +26,7 @@ router
     updateSessionSchedule,
     bookMentor,
   ) 
-
+//get booking history of user
+router.route("/getHistory").get(getBookingHistory);
 
 module.exports = router;
