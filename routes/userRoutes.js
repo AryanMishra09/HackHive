@@ -1,5 +1,6 @@
 const Router = require("express");
-const { register, verifyEmail, login, getAllMentors, getMentorCategoryWise, getProfile, updateProfile } = require("../controllers/userController");
+const { register, verifyEmail, login, getAllMentors, getMentorCategoryWise, getProfile, updateProfile, bookMentor } = require("../controllers/userController");
+const { generateSession, updateSessionSchedule } = require("../middleware/sessionMiddleware");
 const router = Router();
 
 //User register
@@ -16,6 +17,15 @@ router.route("/getMentorListCategorywise").get(getMentorCategoryWise);
 router.route('/getProfile').get(getProfile);
 //for updating profile: 
 router.route("/updateProfile").post(updateProfile);
+
+//mentor booking:
+router
+  .route("/book")
+  .post(
+    generateSession,
+    updateSessionSchedule,
+    bookMentor,
+  ) 
 
 
 module.exports = router;
