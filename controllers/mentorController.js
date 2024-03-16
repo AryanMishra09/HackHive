@@ -1,5 +1,7 @@
 const MentorModal = require("../models/mentorModel");
+const ScheduleModel = require("../models/scheduleModel");
 const { SendVerifyEmail } = require("../services/mailingServices");
+const { slotTimings } = require("../utils/constants");
 const { hashPassword, comparePassword } = require("../utils/passwordUtils");
 const { createJWT } = require("../utils/tokenUtils");
 
@@ -141,8 +143,56 @@ const login = async (req, res, next) => {
     })
   };
 
+  //update slot of psychologist  (Aryan's FUNCTION  FOR TRIAL)
+const updateSlot = async (req, res) => {
+    const { mentorId, date, slots, available } = req.body;
+    const schedule = await ScheduleModel.findOne({
+        mentorId,
+        date,
+    });
+    if(!schedule) {
+      schedule = ScheduleModel.create({
+        mentorId,
+        date,
+      });
+    }
+    if (available === false) {
+      if (!schedule.slots.includes(slots)) {
+        schedule.slots.push(slots);
+      }
+    } else {
+        if (schedule && schedule.slots) {
+            const index = schedule.slots.indexOf(slots);
+            if (index !== -1) {
+              schedule.slots.splice(index, 1);
+            }
+          }
+    }
+    await schedule.save();
+    const responseArray = slotTimings.map((time) => {
+      if (schedule && schedule.slots.includes(time)) {
+        return {
+          time: time,
+          available: false,
+        };
+      } else {
+        return {
+          time: time,
+          available: true,
+        };
+      }
+    });
+    return res
+      .status(200)
+      .json({ 
+        success: true,
+        msg: "Slot was updated successfully", 
+        slots: responseArray });
+  };
+
   module.exports = {
     register,
     verifyEmail,
-    login
+    login,
+    updateSlot
   }

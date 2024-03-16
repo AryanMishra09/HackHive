@@ -3,7 +3,7 @@ const { slotTimings } = require("../utils/constants.js");
 const moment = require("moment-timezone");
 
 const ScheduleSchema = new mongoose.Schema({
-  MentorId: {
+  mentorId: {
     type: mongoose.Types.ObjectId,
     ref: "Mentor",
   },

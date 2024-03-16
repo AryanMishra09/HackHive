@@ -183,11 +183,6 @@ const getMentorCategoryWise = async(req, res, next)=>{
       error: error.message,
     })
   }
- 
-
-
-
-  
 }
 
   module.exports = {
