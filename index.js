@@ -12,6 +12,7 @@ const cors = require("cors");
 app.use(morgan("dev"));
 
 const userRouter = require("./routes/userRoutes.js");
+const MentorRouter = require("./routes/mentorRoutes.js");
 
 app.get("/test", (req, res) => {
     res.send("Hi I am live ");
@@ -21,6 +22,7 @@ app.use(cookie());
 app.use(body_parser.json());
 
 app.use("/api/user/", userRouter);
+app.use("/api/mentor/", MentorRouter);
 
   const start = async () => {
     try {

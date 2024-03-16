@@ -1,15 +1,14 @@
-const UserModel = require("../models/userModel");
+const MentorModal = require("../models/mentorModel");
 const { SendVerifyEmail } = require("../services/mailingServices");
 const { hashPassword, comparePassword } = require("../utils/passwordUtils");
 const { createJWT } = require("../utils/tokenUtils");
 
-
 //User Register
 const register = async (req, res, next) => {
 
-    const {username, email, password, imagepath } = req.body;
+    const {username, email, password, imagepath, profession, qualification, about, chargesph, disorders } = req.body;
     try {
-      const existingUser = await UserModel.findOne({ email });
+      const existingUser = await MentorModal.findOne({ email });
       if(existingUser){
         return  res.status(403).json({
             success: false,
@@ -26,12 +25,17 @@ const register = async (req, res, next) => {
         return res.status(StatusCodes.NotFoundError).json({message: 'Please enter password'})
       }
       const token = Math.floor(100000 + Math.random() * 900000);
-      const newUser = new UserModel({
+      const newUser = new MentorModal({
         username,
         email,
         password: hashedPassword,
         imagepath,
         token,
+        qualification,
+        about,
+        chargesph,
+        disorders,
+        profession,
       });
       await newUser.save();
       SendVerifyEmail(newUser.username, newUser.email, token);
@@ -53,22 +57,22 @@ const register = async (req, res, next) => {
 const verifyEmail = async(req, res, next)=>{
     try {
       const {token, email} = req.body;
-      const user = await UserModel.findOne({ email: email });
+      const user = await MentorModal.findOne({ email: email });
       if(!user){
         return res.status(403).json({
             success: false,
             message: "This email Id is not registered in our app."
         });
       }
-    const validUser = await UserModel.findOne({token});
+    const validUser = await MentorModal.findOne({token});
     if(!validUser){
-        const deletedUser = await UserModel.deleteOne({ email });
+        const deletedUser = await MentorModal.deleteOne({ email });
         return res.status(404).json({
             success: false,
             message: 'Invalid OTP Entered. You have to register again!',
         })
     }else{
-      const user = await UserModel.findByIdAndUpdate(
+      const user = await MentorModal.findByIdAndUpdate(
         {
           _id: validUser._id
         },
@@ -96,7 +100,7 @@ const verifyEmail = async(req, res, next)=>{
 
 //login user 
 const login = async (req, res, next) => {
-    const user = await UserModel.findOne({ email: req.body.email });
+    const user = await MentorModal.findOne({ email: req.body.email });
     if(!user){
       return res.status(403).json({
         success: false,
@@ -119,7 +123,7 @@ const login = async (req, res, next) => {
   
     const token = createJWT({
       userId: user._id,
-      role: "USER",
+      role: "Mentor",
       imageURL: user.imagepath,
     });
     const oneDay = 1000 * 60 * 60 * 24;
@@ -132,7 +136,7 @@ const login = async (req, res, next) => {
     
     return res.status(200).json({
         success: true,
-        message: "User Login Successfull",
+        message: "Mentor Login Successfull",
         user: rest
     })
   };
