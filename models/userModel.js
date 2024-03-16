@@ -52,7 +52,7 @@ const UserSchema = new mongoose.Schema({
     default: false 
   }
   
-},{timestamps:true});
+});
 
 UserSchema.methods.updator = async function () {
   const currentDate = Date.now();

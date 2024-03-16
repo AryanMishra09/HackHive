@@ -1,6 +1,7 @@
 const UserModel = require("../models/userModel");
 const { SendVerifyEmail } = require("../services/mailingServices");
-const { hashPassword } = require("../utils/passwordUtils");
+const { hashPassword, comparePassword } = require("../utils/passwordUtils");
+const { createJWT } = require("../utils/tokenUtils");
 
 
 //User Register
@@ -90,7 +91,51 @@ const verifyEmail = async(req, res, next)=>{
     
   }
 
+//login user 
+const login = async (req, res, next) => {
+    const user = await UserModel.findOne({ email: req.body.email });
+    if(!user){
+      return res.status(403).json({
+        success: false,
+        message: "Email is not registered. Please Register first!",
+      })
+    }
+    if(user && !user.isVerified){
+        return res.status(403).json({
+            success: false,
+            message: "Email is not verified. Please Verify your email first!",
+        })
+    }
+    const isValidUser =
+      user && (await comparePassword(req.body.password, user.password));
+    if (!isValidUser)
+    return res.status(403).json({
+        success: false,
+        message: "Invalid Credentials Entered!!!",
+    })
+  
+    const token = createJWT({
+      userId: user._id,
+      role: "USER",
+      imageURL: user.imagePath,
+    });
+    const oneDay = 1000 * 60 * 60 * 24;
+    res.cookie("token", token, {
+      httpOnly: true,
+      expires: new Date(Date.now() + oneDay),
+      secure: process.env.NODE_ENV === "production",
+    });
+    const {password: pass, ...rest} = user._doc;
+    
+    return res.status(200).json({
+        success: true,
+        message: "User Login Successfull",
+        user: rest
+    })
+  };
+
   module.exports = {
     register,
-    verifyEmail
+    verifyEmail,
+    login
   }
