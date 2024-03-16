@@ -1,3 +1,4 @@
+const MentorModal = require("../models/mentorModel");
 const UserModel = require("../models/userModel");
 const { SendVerifyEmail } = require("../services/mailingServices");
 const { hashPassword, comparePassword } = require("../utils/passwordUtils");
@@ -135,10 +136,34 @@ const login = async (req, res, next) => {
         message: "User Login Successfull",
         user: rest
     })
-  };
+};
+
+//get all mentors:
+const getAllMentors = async(req, res, next)=>{
+  try {
+    const mentor = await MentorModal.find({}).select("-password");
+    if(!mentor){
+      return res.status(403).json({
+        success: false,
+        message: "No mentors exists!",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      mentor,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    })
+  }
+}
 
   module.exports = {
     register,
     verifyEmail,
-    login
+    login,
+    getAllMentors
   }
