@@ -143,32 +143,36 @@ const login = async (req, res, next) => {
     })
   };
 
-  //update slot of psychologist  (Aryan's FUNCTION  FOR TRIAL)
-const updateSlot = async (req, res) => {
-    const { mentorId, date, slots, available } = req.body;
-    const schedule = await ScheduleModel.findOne({
+//update slot of mentor:
+const updateSchedule = async (req, res) => {
+    const { mentorId, date, slot, available } = req.body;
+    let schedule = await ScheduleModel.findOne({
         mentorId,
         date,
     });
     if(!schedule) {
-      schedule = ScheduleModel.create({
+      schedule = new ScheduleModel({
         mentorId,
         date,
       });
+      await schedule.save();
     }
-    if (available === false) {
-      if (!schedule.slots.includes(slots)) {
-        schedule.slots.push(slots);
-      }
-    } else {
-        if (schedule && schedule.slots) {
-            const index = schedule.slots.indexOf(slots);
-            if (index !== -1) {
-              schedule.slots.splice(index, 1);
+    if(schedule){
+        if (available === false) {
+            if (schedule && !schedule.slots.includes(slot)) {
+              schedule.slots.push(slot);
             }
+          } else {
+              if (schedule && schedule.slots) {
+                  const index = schedule.slots.indexOf(slot);
+                  if (index !== -1) {
+                    schedule.slots.splice(index, 1);
+                  }
+                }
           }
+          await schedule.save();
     }
-    await schedule.save();
+    
     const responseArray = slotTimings.map((time) => {
       if (schedule && schedule.slots.includes(time)) {
         return {
@@ -194,5 +198,5 @@ const updateSlot = async (req, res) => {
     register,
     verifyEmail,
     login,
-    updateSlot
+    updateSchedule,
   }
