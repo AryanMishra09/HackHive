@@ -10,13 +10,18 @@ const PORT = process.env.PORT || 3000;
 const cookie = require("cookie-parser");
 const cors = require("cors");
 app.use(morgan("dev"));
+app.use(morgan("dev"));
 
 const userRouter = require("./routes/userRoutes.js");
 const MentorRouter = require("./routes/mentorRoutes.js");
 
 app.get("/test", (req, res) => {
     res.send("Hi I am live ");
-  });
+});
+app.use(cors({
+    origin: '*',
+    allowedHeaders: "X-Requested-With, Content-Type, auth-token"
+}));
 
 app.use(cookie());
 app.use(body_parser.json());
