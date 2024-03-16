@@ -1,5 +1,5 @@
 const Router = require("express");
-const { register, verifyEmail, login, updateSchedule, getSchedule, getProfile, updateProfile, getHistory } = require("../controllers/mentorController");
+const { register, verifyEmail, login, updateSchedule, getSchedule, getProfile, updateProfile, getHistory, sessionupdate } = require("../controllers/mentorController");
 const router = Router();
 
 //User register
@@ -18,6 +18,8 @@ router.route('/getProfile').get(getProfile);
 router.route("/updateProfile").post(updateProfile);
 //getHistory
 router.route("/getHistory").get(getHistory);
+//update session details:
+router.route("/updateSession").post(sessionupdate);
 
 
 module.exports = router;

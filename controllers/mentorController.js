@@ -321,6 +321,40 @@ const getHistory = async(req, res, next)=>{
     }
 } 
 
+//session update:
+const sessionupdate = async (req, res, next)=>{
+    try {
+      const sessionId = req.query.sessionId;
+      const session = await SessionModel.findOneAndUpdate(
+        {
+          _id: sessionId
+        },
+        {
+          $set:{
+            meetLink: req.body.meetlink,
+            sessionStatus: req.body.sessionStatus,
+          },
+        },
+        { new: true }
+      );
+      if(!session){
+        return res.status(403).json({
+            success: true,
+            message: "No such session exists"
+        })
+      }
+      res.status(200).json({
+        success: true,
+        message: "Session updated Successfully",
+        session
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Something went wrong"
+      })
+    }
+  }
 
   module.exports = {
     register,
@@ -331,4 +365,5 @@ const getHistory = async(req, res, next)=>{
     getProfile,
     updateProfile,
     getHistory,
+    sessionupdate
   }
