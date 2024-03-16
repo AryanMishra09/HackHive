@@ -24,7 +24,7 @@ module.exports.slotTimings = [
   
 module.exports.markSessions = [
     "Missed by User",
-    "Missed by Psycologist",
+    "Missed by Mentor",
     "Pending",
     "Successfull",
 ]
