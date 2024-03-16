@@ -30,9 +30,9 @@ module.exports.markSessions = [
 ]
 
 module.exports.category = [
-    "Stress Management Therapist",
-    "Yoga Therapist",
-    "Anxiety Therapist",
+    "StressManagementTherapist",
+    "YogaTherapist",
+    "AnxietyTherapist",
     "Psychiatrist"
 ]
   

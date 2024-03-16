@@ -1,6 +1,7 @@
 const MentorModal = require("../models/mentorModel");
 const UserModel = require("../models/userModel");
 const { SendVerifyEmail } = require("../services/mailingServices");
+const { category } = require("../utils/constants");
 const { hashPassword, comparePassword } = require("../utils/passwordUtils");
 const { createJWT } = require("../utils/tokenUtils");
 
@@ -161,9 +162,38 @@ const getAllMentors = async(req, res, next)=>{
   }
 }
 
+//get mentors category wise:
+const getMentorCategoryWise = async(req, res, next)=>{
+  try {
+    const knownProfession= (req.query.profession);
+    const mentor_category = await MentorModal.find({profession: knownProfession}); 
+    if (!mentor_category || mentor_category.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No Professionals in this category!",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      mentor_category,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    })
+  }
+ 
+
+
+
+  
+}
+
   module.exports = {
     register,
     verifyEmail,
     login,
-    getAllMentors
+    getAllMentors,
+    getMentorCategoryWise
   }
