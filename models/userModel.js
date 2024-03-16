@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
+const SessionModel = require("./SessionModel");
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -35,7 +36,12 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-//   sessions: [{ type: mongoose.Types.ObjectId, ref: SessionModel }],
+  sessions: [
+    { 
+      type: mongoose.Types.ObjectId, 
+      ref: SessionModel 
+    }
+  ],
   imagepath: {
     type: String,
     default: "https://t4.ftcdn.net/jpg/05/89/93/27/360_F_589932782_vQAEAZhHnq1QCGu5ikwrYaQD0Mmurm0N.jpg",

@@ -6,7 +6,7 @@ const BookingSchema = new mongoose.Schema({
     required: true,
     ref: "User",
   },
-  mentortId: {
+  mentorId: {
     type: mongoose.Schema.ObjectId,
     required: true,
     ref: "Mentor",
@@ -21,7 +21,6 @@ const BookingSchema = new mongoose.Schema({
   },
   amount: {
     type: Number,
-    required: true,
     default: 379
   },
   date: {
