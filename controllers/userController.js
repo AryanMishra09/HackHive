@@ -277,7 +277,8 @@ const bookMentor = async (req, res) => {
 const getBookingHistory = async (req, res, next) => {
   try {
     const userId = req.query.userId;
-    const bookings = await BookingModel.find({userId});
+    const bookings = await BookingModel.find({userId}).populate("mentorId");
+    
     if(bookings.length === 0){
       return res.status(403).json({
         success: false,
