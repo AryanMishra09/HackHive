@@ -278,10 +278,10 @@ const getBookingHistory = async (req, res, next) => {
   try {
     const userId = req.query.userId;
     const bookings = await BookingModel.find({userId});
-    if(!bookings){
+    if(bookings.length === 0){
       return res.status(403).json({
-        success: true,
-        message
+        success: false,
+        message: "No booking history"
       })
     }
     return res.status(200).json({
