@@ -36,15 +36,15 @@ module.exports.updateSessionSchedule = async (req, res, next) => {
       user.sessions.push(sessionId);
       await user.save();
   
-      const schedule = await ScheduleModel.findOne({
+      let schedule = await ScheduleModel.findOne({
         mentorId,
         date,
       });
       if (!schedule) {
         schedule = await ScheduleModel({
-          psychologistId: psychologistId,
-          date: date,
-          slots: slot 
+            mentorId,
+            date: date,
+            slots: slot 
         });
         await schedule.save();
       }
