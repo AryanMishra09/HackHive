@@ -199,16 +199,16 @@ const updateSchedule = async (req, res) => {
 const getSchedule = async (req, res) => {
     const { mentorId, date } = req.query;
     try {
-        const schedule = await ScheduleModel.findOne({
+        let schedule = await ScheduleModel.findOne({
             mentorId:mentorId,
             date:date
         });
-        console.log("Schedule: ",schedule)
         if(!schedule){
             schedule = new ScheduleModel({
                 mentorId,
                 date,
             });
+            await schedule.save();
         }
         const responseArray = slotTimings.map((time) => {
           if (schedule && schedule.slots.includes(time)) {
